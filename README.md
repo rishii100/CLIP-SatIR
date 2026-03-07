@@ -1,4 +1,4 @@
-# CLIP-Based Semantic Retrieval for Remote Sensing Images
+# CLIP-SatIR (Satellite Image Retrieval)
 
 This project fine-tunes the **CLIP (Contrastive Language–Image Pretraining)** model on the **RSICD Remote Sensing Image Caption Dataset** to improve alignment between satellite images and natural language descriptions.
 
