@@ -21,7 +21,6 @@ Goal:
 * Learn **better vision–language alignment for satellite imagery**
 * Enable **semantic image retrieval using natural language**
 
----
 
 # Dataset
 
@@ -60,7 +59,6 @@ Example:
 images/train/airport_12.jpg | a large airport with airplanes parked near runway
 ```
 
----
 
 # Pipeline
 
@@ -69,7 +67,6 @@ The project follows the following workflow.
 <img width="1400" height="512" alt="image" src="https://github.com/user-attachments/assets/26d6e6fc-ba2d-40e3-9253-54901a7ff38c" />
 
 
----
 
 # Data Preprocessing
 
@@ -87,7 +84,6 @@ Example:
 
 They are parsed and flattened into individual samples.
 
----
 
 ### 2. Dataset Flattening
 
@@ -107,7 +103,6 @@ Final training dataset:
 (image_path, caption)
 ```
 
----
 
 # Model
 
@@ -127,7 +122,6 @@ Both image and text are projected into the **same embedding space**.
 
 Similarity is computed using **cosine similarity**.
 
----
 
 # Training Setup
 
@@ -166,7 +160,6 @@ Multi-GPU training is supported via:
 torch.nn.DataParallel
 ```
 
----
 
 # Training Loop
 
@@ -191,7 +184,6 @@ for epoch:
         optimizer.step()
 ```
 
----
 
 # Model Saving
 
@@ -237,7 +229,6 @@ similarity = text_embedding ⋅ image_embedding
 
 Top matches are returned.
 
----
 
 # Example Retrieval
 
@@ -265,7 +256,6 @@ Install dependencies:
 pip install torch torchvision transformers accelerate tqdm pandas pillow matplotlib
 ```
 
----
 
 # Running the Project
 
@@ -306,7 +296,6 @@ query = "an airport with multiple airplanes and runway"
 
 The model returns the **most similar satellite images**.
 
----
 
 # Applications
 
@@ -319,8 +308,6 @@ This system can be used for:
 * defense & surveillance
 * land use classification
 
----
-
 # Future Improvements
 
 Possible enhancements:
@@ -330,8 +317,6 @@ Possible enhancements:
 * integrate **BLIP / Flamingo style caption models**
 * add **image-to-text retrieval**
 * build **interactive search UI**
-
----
 
 # Technologies Used
 
