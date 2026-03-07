@@ -1,12 +1,11 @@
-# CLIP Fine-Tuning for Remote Sensing Image–Text Retrieval
+# CLIP-Based Semantic Retrieval for Remote Sensing Images
 
 This project fine-tunes the **CLIP (Contrastive Language–Image Pretraining)** model on the **RSICD Remote Sensing Image Caption Dataset** to improve alignment between satellite images and natural language descriptions.
 
 The trained model can perform **text-to-image retrieval**, enabling queries like *“an airport with multiple airplanes and runway”* to retrieve relevant satellite images.
 
----
 
-# Project Overview
+# Overview
 
 Remote sensing datasets contain complex aerial imagery. General CLIP models are trained on web images and often fail to capture domain-specific semantics such as:
 
