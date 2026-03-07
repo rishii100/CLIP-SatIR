@@ -4,18 +4,6 @@ This project fine-tunes the **CLIP (Contrastive Language–Image Pretraining)** 
 
 The trained model can perform **text-to-image retrieval**, enabling queries like *“an airport with multiple airplanes and runway”* to retrieve relevant satellite images.
 
-
-# Overview
-
-Remote sensing datasets contain complex aerial imagery. General CLIP models are trained on web images and often fail to capture domain-specific semantics such as:
-
-* airports
-* industrial zones
-* farmland patterns
-* road networks
-
-This project adapts CLIP to **remote sensing imagery** by fine-tuning it on RSICD captions.
-
 Goal:
 
 * Learn **better vision–language alignment for satellite imagery**
