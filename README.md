@@ -362,16 +362,3 @@ Possible enhancements:
 * Pandas
 * PIL
 * Matplotlib
-
----
-
-# Author
-
-**Aneerban Saha**
-
-BTech CSE (AI/ML)
-AI Research | Vision-Language Models | Healthcare AI | NLP
-
----
-
-If you want, I can also make a **much stronger “research-style README”** (the kind that gets attention on GitHub + recruiters for AI roles).
