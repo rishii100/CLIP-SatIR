@@ -67,28 +67,8 @@ images/train/airport_12.jpg | a large airport with airplanes parked near runway
 
 The project follows the following workflow.
 
-```
-RSICD Dataset
-      │
-      ▼
-Caption Parsing
-      │
-      ▼
-Dataset Flattening
-(image, caption pairs)
-      │
-      ▼
-CLIP Dataset Loader
-      │
-      ▼
-CLIP Fine-Tuning
-      │
-      ▼
-Embedding Generation
-      │
-      ▼
-Text → Image Retrieval
-```
+<img width="1400" height="512" alt="image" src="https://github.com/user-attachments/assets/26d6e6fc-ba2d-40e3-9253-54901a7ff38c" />
+
 
 ---
 
