@@ -13,6 +13,7 @@ Goal:
 # Dataset
 
 Dataset Link: [https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset](https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset)
+
 Dataset used: **RSICD – Remote Sensing Image Caption Dataset**
 
 Each image contains **multiple captions describing the scene**.
