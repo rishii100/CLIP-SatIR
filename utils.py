@@ -126,7 +126,8 @@ def compute_image_embeddings(_model, _processor, _images):
 
         with torch.no_grad():
             emb = _model.get_image_features(**inputs)
-            emb = emb / emb.norm(dim=-1, keepdim=True)
+            import torch.nn.functional as F
+            emb = F.normalize(emb, p=2, dim=-1)
 
         all_embeddings.append(emb.cpu().numpy())
 
@@ -142,7 +143,8 @@ def search_by_text(query: str, model, processor, image_embeddings, top_k=5):
 
     with torch.no_grad():
         text_emb = model.get_text_features(**inputs)
-        text_emb = text_emb / text_emb.norm(dim=-1, keepdim=True)
+        import torch.nn.functional as F
+        text_emb = F.normalize(text_emb, p=2, dim=-1)
 
     text_emb_np = text_emb.cpu().numpy()
     similarities = (text_emb_np @ image_embeddings.T).squeeze(0)
@@ -160,7 +162,8 @@ def search_by_image(uploaded_image: Image.Image, model, processor, image_embeddi
 
     with torch.no_grad():
         img_emb = model.get_image_features(**inputs)
-        img_emb = img_emb / img_emb.norm(dim=-1, keepdim=True)
+        import torch.nn.functional as F
+        img_emb = F.normalize(img_emb, p=2, dim=-1)
 
     img_emb_np = img_emb.cpu().numpy()
     similarities = (img_emb_np @ image_embeddings.T).squeeze(0)
