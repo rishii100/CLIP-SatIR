@@ -5,10 +5,10 @@ MODEL_REPO = "rishii100/clip-rsicd-finetuned"
 DATASET_NAME = "arampacha/rsicd"
 
 # App settings
-NUM_DEMO_IMAGES = 200
+NUM_DEMO_IMAGES = 50
 DEFAULT_TOP_K = 5
 MAX_TOP_K = 20
-BATCH_SIZE = 16
+BATCH_SIZE = 4
 
 # Example queries for quick-search chips
 EXAMPLE_QUERIES = [

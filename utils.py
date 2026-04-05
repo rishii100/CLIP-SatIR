@@ -126,10 +126,14 @@ def compute_image_embeddings(_model, _processor, _images):
 
         with torch.no_grad():
             emb = _model.get_image_features(**inputs)
+            if not isinstance(emb, torch.Tensor):
+                emb = getattr(emb, "image_embeds", emb[0] if isinstance(emb, tuple) else emb)
             import torch.nn.functional as F
-            emb = F.normalize(emb, p=2, dim=-1)
+            if emb is not None:
+                emb = F.normalize(emb, p=2, dim=-1)
 
-        all_embeddings.append(emb.cpu().numpy())
+        if emb is not None:
+            all_embeddings.append(emb.cpu().numpy())
 
     return np.vstack(all_embeddings)
 
@@ -143,8 +147,11 @@ def search_by_text(query: str, model, processor, image_embeddings, top_k=5):
 
     with torch.no_grad():
         text_emb = model.get_text_features(**inputs)
+        if not isinstance(text_emb, torch.Tensor):
+            text_emb = getattr(text_emb, "text_embeds", text_emb[0] if isinstance(text_emb, tuple) else text_emb)
         import torch.nn.functional as F
-        text_emb = F.normalize(text_emb, p=2, dim=-1)
+        if text_emb is not None:
+            text_emb = F.normalize(text_emb, p=2, dim=-1)
 
     text_emb_np = text_emb.cpu().numpy()
     similarities = (text_emb_np @ image_embeddings.T).squeeze(0)
@@ -162,8 +169,11 @@ def search_by_image(uploaded_image: Image.Image, model, processor, image_embeddi
 
     with torch.no_grad():
         img_emb = model.get_image_features(**inputs)
+        if not isinstance(img_emb, torch.Tensor):
+            img_emb = getattr(img_emb, "image_embeds", img_emb[0] if isinstance(img_emb, tuple) else img_emb)
         import torch.nn.functional as F
-        img_emb = F.normalize(img_emb, p=2, dim=-1)
+        if img_emb is not None:
+            img_emb = F.normalize(img_emb, p=2, dim=-1)
 
     img_emb_np = img_emb.cpu().numpy()
     similarities = (img_emb_np @ image_embeddings.T).squeeze(0)
