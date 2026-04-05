@@ -13,6 +13,7 @@ Goal:
 # Dataset
 
 Live Link: [https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/](https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/)
+
 Dataset Link: [https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset](https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset)
 
 Dataset used: **RSICD – Remote Sensing Image Caption Dataset**
