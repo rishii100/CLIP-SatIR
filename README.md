@@ -2,139 +2,40 @@
 
 Live Link: [https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/](https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/)
 
-This project fine-tunes the **CLIP (Contrastive Language–Image Pretraining)** model on the **RSICD Remote Sensing Image Caption Dataset** to improve alignment between satellite images and natural language descriptions.
+This project fine-tunes the **CLIP (Contrastive Language–Image Pretraining)** model on the **RSICD Remote Sensing Image Caption Dataset** to improve alignment between satellite images and natural language descriptions, and includes a **fully deployed interactive web application** for performing zero-shot semantic search.
 
-The trained model can perform **text-to-image retrieval**, enabling queries like *“an airport with multiple airplanes and runway”* to retrieve relevant satellite images.
+The trained model can perform both **text-to-image retrieval** (e.g., retrieving images for *"an airport with multiple airplanes and runway"*) and **image-to-image similarity search**.
 
-Goal:
+## Live Web Application
 
-* Learn **better vision–language alignment for satellite imagery**
-* Enable **semantic image retrieval using natural language**
+The retrieval model is deployed as a fully interactive dashboard on Streamlit Cloud!
+**Web UI Stack:** Streamlit, HuggingFace Dataset Server API, PyTorch
 
+Features:
+* **Text-to-Image:** Describe a geography, object, or scene, and the app will instantly search the dataset for visually matching satellite pictures.
+* **Image-to-Image:** Upload a satellite picture or select a demo image, and the app will find visually similar satellite scenes nearby.
+* Built with custom CSS to provide a responsive, grid-based, space-themed user interface.
 
-# Dataset
-
-Dataset Link: [https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset](https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset)
-
-Dataset used: **RSICD – Remote Sensing Image Caption Dataset**
-
-Each image contains **multiple captions describing the scene**.
-
-Example caption:
-
-```
-"A large airport with multiple airplanes and long runways."
-```
-
-Dataset structure after preprocessing:
-
-```
-dataset/
- ├── train.csv
- ├── valid.csv
- ├── test.csv
- └── images/
-      ├── train/
-      ├── val/
-      └── test/
-```
-
-Each training sample contains:
-
-```
-image_path | caption
-```
-
-Example:
-
-```
-images/train/airport_12.jpg | a large airport with airplanes parked near runway
-```
-
-
-# Pipeline
-
-The project follows the following workflow.
-
-<img width="1400" height="512" alt="image" src="https://github.com/user-attachments/assets/26d6e6fc-ba2d-40e3-9253-54901a7ff38c" />
-
-
-
-# Data Preprocessing
-
-### 1. Caption Parsing
-
-RSICD captions are stored as lists inside CSV files.
-
-Example:
-
-```
-["caption1",
- "caption2",
- "caption3"]
-```
-
-They are parsed and flattened into individual samples.
-
-
-### 2. Dataset Flattening
-
-Each caption becomes a separate training pair.
-
-Example:
-
-```
-Image A → caption1
-Image A → caption2
-Image A → caption3
-```
-
-Final training dataset:
-
-```
-(image_path, caption)
-```
-
-
-# Model
-
-Base model:
-
-```
-openai/clip-vit-base-patch32
-```
-
-Components:
-
-* **Vision Encoder** → ViT (Vision Transformer)
-* **Text Encoder** → Transformer language encoder
-* **Projection Heads** → shared embedding space
-
-Both image and text are projected into the **same embedding space**.
-
-Similarity is computed using **cosine similarity**.
-
-
-# Training Setup
-
-Training uses contrastive learning.
-
-### Loss Function
-
-CLIP contrastive loss:
-
-```
-L = CrossEntropy(sim(image_i, text_j))
-```
-
-The model learns to:
-
-* maximize similarity between correct image–caption pairs
-* minimize similarity with incorrect pairs
+## Quick Links
+* **Fine-Tuned Model Weights:** [rishii100/clip-rsicd-finetuned](https://huggingface.co/rishii100/clip-rsicd-finetuned)
+* **Dataset Used:** [RSICD – Remote Sensing Image Caption Dataset](https://huggingface.co/datasets/arampacha/rsicd)
 
 ---
 
-### Hyperparameters
+# Training Pipeline & Architecture
+
+<img width="1400" height="512" alt="image" src="https://github.com/user-attachments/assets/26d6e6fc-ba2d-40e3-9253-54901a7ff38c" />
+
+### Model Details
+Base model: `openai/clip-vit-base-patch32`
+
+Components:
+* **Vision Encoder** → ViT (Vision Transformer)
+* **Text Encoder** → Transformer language encoder
+* **Projection Heads** → Shared 512-dimensional embedding space
+
+### Training Setup & Optimization
+Training uses contrastive learning with the CLIP loss function (`CrossEntropy(sim(image_i, text_j))`), explicitly learning to maximize similarity between correct image/caption pairs while minimizing incorrect ones.
 
 | Parameter     | Value         |
 | ------------- | ------------- |
@@ -146,153 +47,64 @@ The model learns to:
 | Epochs        | 5             |
 | Hardware      | GPU (CUDA)    |
 
-Multi-GPU training is supported via:
+*Multi-GPU training supported via `torch.nn.DataParallel`.*
 
+---
+
+# Data Preprocessing
+
+RSICD captions are originally stored as lists corresponding to a single image. These are parsed and flattened into individual `(image_path, caption)` training pairs to maximize the dataset volume for contrastive framing.
+
+Example:
 ```
-torch.nn.DataParallel
-```
-
-
-# Training Loop
-
-For each batch:
-
-1. Load images and captions
-2. Encode using CLIP processor
-3. Forward pass through CLIP
-4. Compute contrastive loss
-5. Backpropagate gradients
-6. Update weights
-
-Pseudo workflow:
-
-```
-for epoch:
-    for batch:
-        image_features = model.encode_image()
-        text_features = model.encode_text()
-        loss = contrastive_loss()
-        loss.backward()
-        optimizer.step()
-```
-
-
-# Model Saving
-
-After training the model is saved locally.
-
-```
-clip-rsicd/
- ├── config.json
- ├── pytorch_model.bin
- └── tokenizer files
-```
-
-Compressed export:
-
-```
-clip-rsicd.zip
+dataset/images/train/airport_12.jpg | "a large airport with airplanes parked near runway"
 ```
 
 ---
 
-# Inference: Text → Image Retrieval
+# Running & Deploying the Project
 
-After training, the model can retrieve relevant satellite images from natural language queries.
-
-Example query:
-
-```
-"an airport with multiple airplanes and multiple runway"
-```
-
-Steps:
-
-1. Encode query text
-2. Encode validation images
-3. Compute cosine similarity
-4. Retrieve top-K images
-
-Similarity:
-
-```
-similarity = text_embedding ⋅ image_embedding
-```
-
-Top matches are returned.
-
-
-# Example Retrieval
-
-Query:
-
-```
-"an airport with multiple airplanes and runway"
-```
-
-Output:
-
-```
-Top 5 relevant satellite images
-```
-
-The retrieved images correspond to **airport scenes with runways and aircraft**.
-
----
-
-# Installation
-
-Install dependencies:
-
+### Running the Web App Locally
+To run the Streamlit frontend UI locally:
 ```bash
-pip install torch torchvision transformers accelerate tqdm pandas pillow matplotlib
+pip install -r requirements.txt
+streamlit run app.py
 ```
 
-
-# Running the Project
-
-### 1. Prepare dataset
-
-Place RSICD dataset in:
-
-```
-/kaggle/input/rsicd-image-caption-dataset
-```
-
----
-
-### 2. Train model
-
-Run the notebook:
-
+### Reproducing Training
+To replicate the fine-tuning process, place the RSICD dataset in `/kaggle/input/rsicd-image-caption-dataset` and execute the provided Jupyter Notebook:
 ```
 clip-finetuning.ipynb
 ```
-
-This will:
-
-* preprocess captions
-* build dataset
-* fine-tune CLIP
-* save trained model
+This notebook will handle building the dataset, extracting features, fine-tuning the model loop, and exporting the `config.json` and PyTorch `.bin` weights.
 
 ---
 
-### 3. Run retrieval
+# Production Considerations & Engineering
 
-Example query:
+During deployment to Streamlit Cloud, several key engineering challenges for handling HuggingFace libraries were resolved:
+1. **Dependency Constraints:** Bypassed heavy C++ builds (`pyarrow`, `datasets`) failing on newer Python environments by directly accessing the HuggingFace REST `datasets-server` API to dynamically load batches of images.
+2. **Environment Versioning:** Pinned execution context to PyTorch-compatible Python 3.11 using `.python-version`.
+3. **Robust Feature Extraction:** Overrode standard HuggingFace `get_image_features()` pipelines with custom matrix dimensionality checks (preventing catastrophic 4x512 to 768x512 projection shape mismatches) guaranteeing compatibility regardless of underlying `transformers` library updates.
 
-```python
-query = "an airport with multiple airplanes and runway"
-```
+---
 
-The model returns the **most similar satellite images**.
+# Applications
+This system can be used for:
+* Satellite image database search
+* Geospatial intelligence & Defense surveillance
+* Disaster monitoring
+* Urban planning and Land use classification
+
+# Future Improvements
+* Train with state-of-the-art **CLIP ViT-L/14**
+* Add **hard negative mining** to the contrastive loop
+* Integrate **BLIP / Flamingo style caption models**
 
 # Technologies Used
-
 * PyTorch
-* HuggingFace Transformers
-* CLIP
+* HuggingFace Transformers & Hub
+* Streamlit
 * Pandas
-* PIL
+* Pillow (PIL)
 * Matplotlib
