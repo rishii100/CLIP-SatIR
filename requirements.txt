@@ -2,8 +2,7 @@
 torch
 transformers
 Pillow
-datasets==3.2.0
-pyarrow==18.1.0
 streamlit
 numpy
 huggingface_hub
+requests

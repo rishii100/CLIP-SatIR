@@ -1,11 +1,14 @@
 """
 Utility functions for CLIP-based satellite image search.
 Handles model loading, image embedding, and similarity search.
+Uses HuggingFace Datasets Server API to load images (no pyarrow needed).
 """
 
 import numpy as np
+import requests
 import torch
 import streamlit as st
+from io import BytesIO
 from PIL import Image
 from transformers import CLIPModel, CLIPProcessor
 
@@ -24,52 +27,87 @@ def load_model():
     return model, processor
 
 
-# ─── Dataset Loading ─────────────────────────────────────────────────────────
+# ─── Dataset Loading (via HuggingFace Datasets Server API) ───────────────────
+
+
+DATASETS_API = "https://datasets-server.huggingface.co"
 
 
 @st.cache_data(show_spinner=False)
 def load_demo_images(num_images=NUM_DEMO_IMAGES):
-    """Load a subset of RSICD images from HuggingFace Datasets."""
-    from datasets import load_dataset
-
-    try:
-        ds = load_dataset(DATASET_NAME, split="valid")
-    except Exception:
-        try:
-            ds = load_dataset(DATASET_NAME, split="validation")
-        except Exception:
-            ds = load_dataset(DATASET_NAME, split="test")
-
-    # Limit to requested number
-    if len(ds) > num_images:
-        ds = ds.select(range(num_images))
-
+    """
+    Load RSICD images using the HuggingFace Datasets Server API.
+    This avoids requiring pyarrow / datasets library.
+    """
     images = []
     captions = []
     filenames = []
 
-    for i, item in enumerate(ds):
-        # Handle image field
-        img = item.get("image")
-        if img is None:
-            continue
-        if not isinstance(img, Image.Image):
-            img = Image.open(img).convert("RGB")
-        else:
-            img = img.convert("RGB")
-        images.append(img)
+    batch_size = 100  # API max per request
+    offset = 0
 
-        # Handle captions field (may be list or string)
-        cap = item.get("captions", item.get("caption", item.get("text", "")))
-        if isinstance(cap, list):
-            cap = cap[0] if cap else ""
-        captions.append(str(cap))
+    while len(images) < num_images:
+        remaining = min(batch_size, num_images - len(images))
+        url = (
+            f"{DATASETS_API}/rows"
+            f"?dataset={DATASET_NAME}&config=default&split=valid"
+            f"&offset={offset}&length={remaining}"
+        )
 
-        # Handle filename
-        fn = item.get("filename", f"image_{i:04d}.jpg")
-        if "/" in str(fn):
-            fn = str(fn).split("/")[-1]
-        filenames.append(str(fn))
+        try:
+            resp = requests.get(url, timeout=60)
+            if resp.status_code != 200:
+                st.warning(f"Dataset API returned status {resp.status_code}. Using {len(images)} images.")
+                break
+            data = resp.json()
+        except Exception as e:
+            st.warning(f"Could not reach dataset API: {e}. Using {len(images)} images.")
+            break
+
+        rows = data.get("rows", [])
+        if not rows:
+            break
+
+        for row in rows:
+            if len(images) >= num_images:
+                break
+
+            item = row.get("row", {})
+
+            # ── Download image from CDN URL ──
+            img_info = item.get("image")
+            if not img_info:
+                continue
+
+            img_url = img_info.get("src", "")
+            if not img_url:
+                continue
+
+            try:
+                img_resp = requests.get(img_url, timeout=15)
+                img = Image.open(BytesIO(img_resp.content)).convert("RGB")
+            except Exception:
+                continue
+
+            images.append(img)
+
+            # ── Caption ──
+            cap = item.get("captions", item.get("caption", item.get("text", "")))
+            if isinstance(cap, list):
+                cap = cap[0] if cap else ""
+            captions.append(str(cap))
+
+            # ── Filename ──
+            fn = item.get("filename", f"image_{len(filenames):04d}.jpg")
+            if "/" in str(fn):
+                fn = str(fn).split("/")[-1]
+            filenames.append(str(fn))
+
+        offset += len(rows)
+
+    if not images:
+        st.error("❌ Could not load any images from the RSICD dataset. Please try again later.")
+        st.stop()
 
     return images, captions, filenames
 
