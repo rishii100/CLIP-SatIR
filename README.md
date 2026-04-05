@@ -12,6 +12,7 @@ Goal:
 
 # Dataset
 
+Live Link: [https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/](https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/)
 Dataset Link: [https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset](https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset)
 
 Dataset used: **RSICD – Remote Sensing Image Caption Dataset**
@@ -285,28 +286,6 @@ query = "an airport with multiple airplanes and runway"
 ```
 
 The model returns the **most similar satellite images**.
-
-
-# Applications
-
-This system can be used for:
-
-* satellite image search
-* geospatial intelligence
-* disaster monitoring
-* urban planning
-* defense & surveillance
-* land use classification
-
-# Future Improvements
-
-Possible enhancements:
-
-* train with **CLIP ViT-L/14**
-* add **hard negative mining**
-* integrate **BLIP / Flamingo style caption models**
-* add **image-to-text retrieval**
-* build **interactive search UI**
 
 # Technologies Used
 
