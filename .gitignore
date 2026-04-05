@@ -1,9 +1,7 @@
 # Model weights (too large for GitHub)
 clip-rsicd/
 
-# Kaggle notebook
-clip-finetuning.ipynb
-
+# Kaggle notebook is now included in the repo
 # Backend (separate deployment)
 backend/
 

@@ -25,7 +25,7 @@ from utils import (
 # ─── Page Config ─────────────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="CLIP-SatIR — CLIP Image Retrieval",
+    page_title="CLIP-SatIR:CLIP Image Retrieval",
     page_icon="🛰️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -190,7 +190,7 @@ with st.sidebar:
     st.markdown(
         """
     <div class='info-box'>
-        <strong>SatelliteSearch</strong> uses a CLIP model fine-tuned on
+        <strong>CLIP-SatIR</strong> uses a CLIP model fine-tuned on
         the RSICD dataset to match text queries with satellite imagery.
         <br><br>
         <b>Model:</b> CLIP ViT-B/32<br>
@@ -201,13 +201,6 @@ with st.sidebar:
     """,
         unsafe_allow_html=True,
     )
-
-    st.markdown("<hr class='subtle-divider'>", unsafe_allow_html=True)
-    st.markdown(
-        "<p style='color:#475569; font-size:0.75rem; text-align:center;'>",
-        unsafe_allow_html=True,
-    )
-
 
 # ─── Hero Section ────────────────────────────────────────────────────────────
 
