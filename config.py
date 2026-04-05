@@ -25,10 +25,9 @@ EXAMPLE_QUERIES = [
 ]
 
 # Branding
-APP_TITLE = "🛰️ SatelliteSearch"
+APP_TITLE = "🛰️ CLIP-SatIR"
 APP_SUBTITLE = "Search satellite imagery using natural language"
 APP_DESCRIPTION = (
-    "Powered by **CLIP ViT-B/32** fine-tuned on the "
+    "CLIP ViT-B/32 is fine-tuned on the "
     "[RSICD dataset](https://huggingface.co/datasets/arampacha/rsicd) "
-    "— a collection of 10,000+ remote sensing images with captions."
 )
