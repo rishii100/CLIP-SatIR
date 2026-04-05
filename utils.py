@@ -125,8 +125,14 @@ def compute_image_embeddings(_model, _processor, _images):
         inputs = _processor(images=batch, return_tensors="pt", padding=True)
 
         with torch.no_grad():
-            outputs = _model(**inputs)
-            emb = outputs.image_embeds
+            emb = _model.get_image_features(**inputs)
+            
+            # Handle anomalous HuggingFace returns
+            if not isinstance(emb, torch.Tensor):
+                if hasattr(emb, "pooler_output") and hasattr(_model, "visual_projection"):
+                    emb = _model.visual_projection(emb.pooler_output)
+                else:
+                    emb = getattr(emb, "image_embeds", emb[0] if isinstance(emb, tuple) else emb)
             
             import torch.nn.functional as F
             emb = F.normalize(emb, p=2, dim=-1)
@@ -145,6 +151,13 @@ def search_by_text(query: str, model, processor, image_embeddings, top_k=5):
 
     with torch.no_grad():
         text_emb = model.get_text_features(**inputs)
+        
+        if not isinstance(text_emb, torch.Tensor):
+            if hasattr(text_emb, "pooler_output") and hasattr(model, "text_projection"):
+                text_emb = model.text_projection(text_emb.pooler_output)
+            else:
+                text_emb = getattr(text_emb, "text_embeds", text_emb[0] if isinstance(text_emb, tuple) else text_emb)
+        
         import torch.nn.functional as F
         text_emb = F.normalize(text_emb, p=2, dim=-1)
 
@@ -163,8 +176,14 @@ def search_by_image(uploaded_image: Image.Image, model, processor, image_embeddi
     inputs = processor(images=uploaded_image, return_tensors="pt")
 
     with torch.no_grad():
-        outputs = model(**inputs)
-        img_emb = outputs.image_embeds
+        img_emb = model.get_image_features(**inputs)
+        
+        if not isinstance(img_emb, torch.Tensor):
+            if hasattr(img_emb, "pooler_output") and hasattr(model, "visual_projection"):
+                img_emb = model.visual_projection(img_emb.pooler_output)
+            else:
+                img_emb = getattr(img_emb, "image_embeds", img_emb[0] if isinstance(img_emb, tuple) else img_emb)
+        
         import torch.nn.functional as F
         img_emb = F.normalize(img_emb, p=2, dim=-1)
 
