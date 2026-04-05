@@ -1,0 +1,35 @@
+# Model weights (too large for GitHub)
+clip-rsicd/
+
+# Kaggle notebook
+clip-finetuning.ipynb
+
+# Backend (separate deployment)
+backend/
+
+# Test scripts
+test_image_to_image.py
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env
+.env
+venv/
+.venv/
