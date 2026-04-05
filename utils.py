@@ -115,6 +115,33 @@ def load_demo_images(num_images=NUM_DEMO_IMAGES):
 # ─── Embedding Computation ───────────────────────────────────────────────────
 
 
+def extract_tensor(emb, model, is_vision=True):
+    """Bulletproof extraction of embeddings from HuggingFace outputs."""
+    if isinstance(emb, torch.Tensor):
+        return emb
+        
+    if hasattr(emb, "image_embeds") and emb.image_embeds is not None:
+        return emb.image_embeds
+        
+    if hasattr(emb, "text_embeds") and emb.text_embeds is not None:
+        return emb.text_embeds
+        
+    if hasattr(emb, "pooler_output") and emb.pooler_output is not None:
+        tensor = emb.pooler_output
+        target_dim = getattr(model.config, "projection_dim", 512)
+        # Only explicitly project if the tensor hasn't been projected yet
+        if tensor.shape[-1] != target_dim:
+            if is_vision and hasattr(model, "visual_projection"):
+                tensor = model.visual_projection(tensor)
+            elif not is_vision and hasattr(model, "text_projection"):
+                tensor = model.text_projection(tensor)
+        return tensor
+        
+    if isinstance(emb, tuple):
+        return emb[0]
+        
+    return emb
+
 @st.cache_data(show_spinner=False)
 def compute_image_embeddings(_model, _processor, _images):
     """Compute normalized embeddings for all images (batched)."""
@@ -126,13 +153,7 @@ def compute_image_embeddings(_model, _processor, _images):
 
         with torch.no_grad():
             emb = _model.get_image_features(**inputs)
-            
-            # Handle anomalous HuggingFace returns
-            if not isinstance(emb, torch.Tensor):
-                if hasattr(emb, "pooler_output") and hasattr(_model, "visual_projection"):
-                    emb = _model.visual_projection(emb.pooler_output)
-                else:
-                    emb = getattr(emb, "image_embeds", emb[0] if isinstance(emb, tuple) else emb)
+            emb = extract_tensor(emb, _model, is_vision=True)
             
             import torch.nn.functional as F
             emb = F.normalize(emb, p=2, dim=-1)
@@ -151,12 +172,7 @@ def search_by_text(query: str, model, processor, image_embeddings, top_k=5):
 
     with torch.no_grad():
         text_emb = model.get_text_features(**inputs)
-        
-        if not isinstance(text_emb, torch.Tensor):
-            if hasattr(text_emb, "pooler_output") and hasattr(model, "text_projection"):
-                text_emb = model.text_projection(text_emb.pooler_output)
-            else:
-                text_emb = getattr(text_emb, "text_embeds", text_emb[0] if isinstance(text_emb, tuple) else text_emb)
+        text_emb = extract_tensor(text_emb, model, is_vision=False)
         
         import torch.nn.functional as F
         text_emb = F.normalize(text_emb, p=2, dim=-1)
@@ -177,12 +193,7 @@ def search_by_image(uploaded_image: Image.Image, model, processor, image_embeddi
 
     with torch.no_grad():
         img_emb = model.get_image_features(**inputs)
-        
-        if not isinstance(img_emb, torch.Tensor):
-            if hasattr(img_emb, "pooler_output") and hasattr(model, "visual_projection"):
-                img_emb = model.visual_projection(img_emb.pooler_output)
-            else:
-                img_emb = getattr(img_emb, "image_embeds", img_emb[0] if isinstance(img_emb, tuple) else img_emb)
+        img_emb = extract_tensor(img_emb, model, is_vision=True)
         
         import torch.nn.functional as F
         img_emb = F.normalize(img_emb, p=2, dim=-1)
