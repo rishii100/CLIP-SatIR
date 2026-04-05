@@ -1,5 +1,5 @@
 """
-🛰️ SatelliteSearch — CLIP-powered satellite image retrieval
+🛰️ CLIP-SatIR — CLIP-powered satellite image retrieval
 """
 
 import streamlit as st
@@ -25,7 +25,7 @@ from utils import (
 # ─── Page Config ─────────────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="SatelliteSearch — CLIP Image Retrieval",
+    page_title="CLIP-SatIR — CLIP Image Retrieval",
     page_icon="🛰️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -204,8 +204,7 @@ with st.sidebar:
 
     st.markdown("<hr class='subtle-divider'>", unsafe_allow_html=True)
     st.markdown(
-        "<p style='color:#475569; font-size:0.75rem; text-align:center;'>"
-        "Built with ❤️ using Streamlit + HuggingFace</p>",
+        "<p style='color:#475569; font-size:0.75rem; text-align:center;'>",
         unsafe_allow_html=True,
     )
 
