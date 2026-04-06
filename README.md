@@ -1,5 +1,7 @@
 # CLIP-SatIR (Satellite Image Retrieval)
 
+Live Link: [https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/](https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/)
+
 This project fine-tunes the **CLIP (Contrastive Language–Image Pretraining)** model on the **RSICD Remote Sensing Image Caption Dataset** to improve alignment between satellite images and natural language descriptions.
 
 The trained model can perform **text-to-image retrieval**, enabling queries like *“an airport with multiple airplanes and runway”* to retrieve relevant satellite images.
@@ -11,8 +13,6 @@ Goal:
 
 
 # Dataset
-
-Live Link: [https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/](https://clip-satir-efmoq52houyrimwepa9hvx.streamlit.app/)
 
 Dataset Link: [https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset](https://www.kaggle.com/datasets/thedevastator/rsicd-image-caption-dataset)
 
