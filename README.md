@@ -14,6 +14,7 @@ The retrieval model is deployed as a fully interactive dashboard on Streamlit Cl
 Features:
 * **Text-to-Image:** Describe a geography, object, or scene, and the app will instantly search the dataset for visually matching satellite pictures.
 * **Image-to-Image:** Upload a satellite picture or select a demo image, and the app will find visually similar satellite scenes nearby.
+* **Large Search Pool:** Configured to search through a curated set of 350 satellite images from the RSICD dataset.
 * Built with custom CSS to provide a responsive, grid-based, space-themed user interface.
 
 ## Quick Links
