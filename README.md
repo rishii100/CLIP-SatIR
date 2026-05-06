@@ -25,7 +25,8 @@ Features:
 
 # Training Pipeline & Architecture
 
-<img width="1400" height="512" alt="image" src="https://github.com/user-attachments/assets/26d6e6fc-ba2d-40e3-9253-54901a7ff38c" />
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/69123129-65e1-4ff3-a1ff-ef7fcf31d916" />
+
 
 ### Model Details
 Base model: `openai/clip-vit-base-patch32`
